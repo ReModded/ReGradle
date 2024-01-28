@@ -1,7 +1,6 @@
 package dev.remodded.regradle
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.kotlin.dsl.support.uppercaseFirstChar
 import java.util.*
