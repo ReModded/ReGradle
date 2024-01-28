@@ -6,7 +6,7 @@ import org.gradle.api.artifacts.ResolvedDependency
 
 fun Project.includeInJar(dependency: ResolvedDependency): Boolean {
     return getDependencyList().any {
-        dependency.name.contains(it)
+        it.isNotBlank() && dependency.name.startsWith(it)
     }
 }
 
