@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "2.0.0"
     `kotlin-dsl`
     id("com.gradle.plugin-publish") version "1.2.1"
 }
@@ -8,13 +8,16 @@ group = "dev.remodded"
 version = "1.0.0-SNAPSHOT"
 
 repositories {
-    mavenCentral()
+    maven("https://repo.remodded.dev/repository/maven-central/")
 }
 
-dependencies {}
+dependencies {
+    implementation("com.google.devtools.ksp:symbol-processing-api:2.0.0-1.0.22")
+    implementation("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.0.0-1.0.22")
+}
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 gradlePlugin {
