@@ -9,6 +9,7 @@ class ReGradlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.logger.info("Applying ReGradle to ${project.name}")
 
+        // Add the KSP plugin and dependencies
         project.plugins.apply("com.google.devtools.ksp")
         project.repositories.maven("https://repo.remodded.dev/repository/maven-public/")
         project.dependencies.add("ksp", "dev.remodded:ReGradle:1.0.0-SNAPSHOT")

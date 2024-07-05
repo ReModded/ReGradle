@@ -5,6 +5,11 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.support.uppercaseFirstChar
 
+/**
+ * Plugin properties.
+ *
+ * @property data The plugin properties.
+ */
 class PluginProps(
     private val data: Map<String, String>
 ) : Map<String, String> by data {
@@ -28,6 +33,13 @@ class PluginProps(
     val rootPackage: String by delegate
 
     companion object {
+
+        /**
+         * Creates plugin properties from the project.
+         *
+         * @param project The project.
+         * @return The plugin properties.
+         */
         fun from(project: Project): PluginProps {
             val props = project.properties
                 .filter { prop -> prop.key.startsWith('$') }
