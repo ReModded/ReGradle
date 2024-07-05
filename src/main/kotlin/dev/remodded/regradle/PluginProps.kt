@@ -40,7 +40,7 @@ class PluginProps(
          * @param project The project.
          * @return The plugin properties.
          */
-        fun from(project: Project): PluginProps {
+        fun from(project: Project, withPlatform: Boolean): PluginProps {
             val props = project.properties
                 .filter { prop -> prop.key.startsWith('$') }
                 .map { prop -> prop.key.drop(1) to prop.value as String }
@@ -68,9 +68,12 @@ class PluginProps(
             val mainClassname =
                 "$name${if (platform.contains('-')) platform.substring(0, platform.lastIndexOf('-')) else platform}"
 
-            props["platform"] = platform
-            props["entry_point"] = "$rootPackage.$mainClassname"
             props["root_package"] = rootPackage
+
+            if (withPlatform) {
+                props["platform"] = platform
+                props["entry_point"] = "$rootPackage.$mainClassname"
+            }
 
             return PluginProps(props)
         }
@@ -82,4 +85,4 @@ class PluginProps(
  *
  * @return The plugin properties.
  */
-fun Project.getPluginProps() = PluginProps.from(this)
+fun Project.getPluginProps(withPlatform: Boolean = true) = PluginProps.from(this, withPlatform)
