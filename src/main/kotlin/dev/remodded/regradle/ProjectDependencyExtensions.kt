@@ -21,5 +21,12 @@ fun Project.includeInJar(dependency: ResolvedDependency): Boolean {
  * @return The dependency list.
  */
 fun Project.getDependencyList(): List<String> {
-    return (properties["dependencyList"] as? String?)?.split(',') ?: listOf()
+    val dependencyList = properties["dependencyList"] as? String ?: ""
+    val dependencies = dependencyList.split(",").toMutableSet()
+
+    // Add all subprojects to the dependency list
+    for (proj in rootProject.subprojects)
+        dependencies.add("${proj.group}:${proj.name}")
+
+    return dependencies.toList()
 }
