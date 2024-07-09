@@ -1,24 +1,27 @@
 package dev.remodded.regradle
 
-import com.google.devtools.ksp.gradle.KspExtension
+import dev.remodded.regradle.modules.CommonPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.maven
+import org.slf4j.LoggerFactory
 
 class ReGradlePlugin : Plugin<Project> {
+
+    private val logger = LoggerFactory.getLogger("ReGradle")
+
     override fun apply(project: Project) {
         project.logger.info("Applying ReGradle to ${project.name}")
 
-        // Add the KSP plugin and dependencies
-        project.plugins.apply("com.google.devtools.ksp")
-        project.repositories.maven("https://repo.remodded.dev/repository/maven-public/")
-        project.dependencies.add("ksp", "dev.remodded:ReGradle:1.0.0-SNAPSHOT")
+        if (project != project.rootProject)
+            logger.warn("ReGradle should only be applied to the root project")
 
-        project.extensions.findByType(KspExtension::class.java)?.apply {
-            val props = project.getPluginProps(false)
-            props.forEach {
-                arg(it.key, it.value)
-            }
-        }
+        project.tryApplyToSubproject("common", CommonPlugin::class.java)
+    }
+
+
+    private fun Project.tryApplyToSubproject(subprojectName: String, plugin: Class<out Plugin<Project>>): Boolean {
+        val subproject = subprojects.find { it.name.equals(subprojectName, true) } ?: return false
+        subproject.plugins.apply(plugin)
+        return true
     }
 }
