@@ -38,9 +38,15 @@ publishing {
     repositories {
         val username: String? by project
         val password: String? by project
+        val repoURL = "https://repo.remodded.dev/repository/" +
+                if (version.toString().endsWith("SNAPSHOT"))
+                    "maven-snapshots/"
+                else
+                    "maven-releases/"
+
         maven {
             name = "ReModded"
-            url = uri("https://repo.remodded.dev/repository/maven-snapshots/")
+            url = uri(repoURL)
             credentials {
                 this.username = username
                 this.password = password
