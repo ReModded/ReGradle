@@ -1,8 +1,7 @@
-package dev.remodded.regradle
+package dev.remodded.regradle.plugin
 
 import org.gradle.api.Project
 import java.io.File
-
 
 /**
  * Get a plugin from the maven repository.

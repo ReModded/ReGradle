@@ -1,4 +1,4 @@
-package dev.remodded.regradle
+package dev.remodded.regradle.project
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ResolvedDependency

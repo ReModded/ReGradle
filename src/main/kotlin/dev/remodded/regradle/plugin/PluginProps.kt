@@ -1,4 +1,4 @@
-package dev.remodded.regradle
+package dev.remodded.regradle.plugin
 
 import dev.remodded.regradle.utils.PascalCaseMapDelegate
 import org.gradle.api.Project

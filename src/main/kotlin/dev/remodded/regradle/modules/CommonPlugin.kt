@@ -1,7 +1,7 @@
 package dev.remodded.regradle.modules
 
 import com.google.devtools.ksp.gradle.KspExtension
-import dev.remodded.regradle.getPluginProps
+import dev.remodded.regradle.plugin.getPluginProps
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.maven

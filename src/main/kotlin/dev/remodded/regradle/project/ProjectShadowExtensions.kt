@@ -1,8 +1,8 @@
-package dev.remodded.regradle
+package dev.remodded.regradle.project
 
+import dev.remodded.regradle.utils.getOptional
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
-
 
 private const val NEEDS_SHADOW = "needsShadow"
 
