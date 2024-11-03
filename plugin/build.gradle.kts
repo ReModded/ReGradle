@@ -20,6 +20,14 @@ kotlin {
     jvmToolchain(21)
 }
 
+tasks {
+    jar {
+        manifest {
+            attributes["ReGradle-Version"] = project.version
+        }
+    }
+}
+
 gradlePlugin {
     website = "https://github.com/ReModded/ReGradle"
     vcsUrl = "https://github.com/ReModded/ReGradle"
