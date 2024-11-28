@@ -9,6 +9,8 @@ class ManifestReader(contextClass: Class<*>) {
     val manifest: Manifest = try {
         Manifest(contextClass.getResourceAsStream("/META-INF/MANIFEST.MF"))
     } catch (e: Exception) {
+        println("Error while reading manifest:")
+        e.printStackTrace()
         Manifest()
     }
 
@@ -16,6 +18,8 @@ class ManifestReader(contextClass: Class<*>) {
         return try {
             manifest.mainAttributes.getValue(key)
         } catch (e: Exception) {
+            println("Error while getting manifest value: $key")
+            e.printStackTrace()
             null
         }
     }
