@@ -5,6 +5,7 @@ import dev.remodded.regradle.modules.ModuleType
 import dev.remodded.regradle.plugin.getPluginProps
 import dev.remodded.regradle.project.markAsBuildTarget
 import dev.remodded.regradle.project.markAsNeedShadow
+import dev.remodded.regradle.regradleConfiguration
 import dev.remodded.regradle.utils.compileOnly
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
@@ -28,7 +29,7 @@ class VelocityModulePlugin : ModulePlugin(ModuleType.VELOCITY) {
             maven("https://repo.remodded.dev/repository/maven-public/")
         }
 
-        val velocityVersion = "3.3.0-SNAPSHOT"
+        val velocityVersion = regradleConfiguration.velocityVersion
 
         dependencies {
             compileOnly("com.velocitypowered:velocity-api:$velocityVersion")
@@ -36,7 +37,7 @@ class VelocityModulePlugin : ModulePlugin(ModuleType.VELOCITY) {
 
         tasks {
             named<RunVelocity>("runVelocity") {
-                velocityVersion(velocityVersion)
+                velocityVersion(velocityVersion.toString())
 
                 // TODO: add dependencies
                 //  pluginJars(getPluginFromMaven("dev.remodded.recore:ReCore-Velocity:1.0.0-SNAPSHOT"))
