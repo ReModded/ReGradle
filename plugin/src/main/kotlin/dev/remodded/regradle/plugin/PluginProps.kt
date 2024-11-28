@@ -1,5 +1,7 @@
 package dev.remodded.regradle.plugin
 
+import dev.remodded.regradle.modules.ModuleType
+import dev.remodded.regradle.regradle
 import dev.remodded.regradle.utils.PascalCaseMapDelegate
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.provideDelegate
@@ -40,17 +42,30 @@ class PluginProps(
          * @param project The project.
          * @return The plugin properties.
          */
-        fun from(project: Project, withPlatform: Boolean): PluginProps {
+        fun from(project: Project): PluginProps {
             val props = project.properties
                 .filter { prop -> prop.key.startsWith('$') }
                 .map { prop -> prop.key.drop(1) to prop.value as String }
                 .toMap(mutableMapOf())
 
+            val regradle = project.regradle()
+            val module = regradle?.module ?: ModuleType.None
+
             // Base properties
             val name = props.getOrPut("name") { "ReTemplate" }
-            val platform = project.name.uppercaseFirstChar()
+
             val group = props.getOrPut("group") { "dev.remodded" }
-            val rootPackage = "$group.${name.lowercase()}.${platform.lowercase().replace('-', '_')}"
+            var platform = project.name.uppercaseFirstChar()
+            var platformPackage = platform.lowercase().replace('-', '_')
+
+            if (module != ModuleType.None && regradle != null) {
+                platform = module.name.lowercase().uppercaseFirstChar()
+                platformPackage = module.platformPackageName(regradle.mcVersion)
+            }
+
+            val rootPackage = "$group.${name.lowercase()}.$platformPackage"
+            val mainClassname = "$name$platform"
+
 
             props.getOrPut("id") { name.lowercase() }
             props.getOrPut("version") { "0.0.1-SNAPSHOT" }
@@ -65,15 +80,10 @@ class PluginProps(
             props.getOrPut("url_issues") { url }
 
             // Class paths
-            val mainClassname =
-                "$name${if (platform.contains('-')) platform.substring(0, platform.lastIndexOf('-')) else platform}"
-
             props["root_package"] = rootPackage
-
-            if (withPlatform) {
-                props["platform"] = platform
-                props["entry_point"] = "$rootPackage.$mainClassname"
-            }
+            props["platform"] = platform
+            props["main_class"] = mainClassname
+            props["entry_point"] = "$rootPackage.$mainClassname"
 
             return PluginProps(props)
         }
@@ -85,4 +95,4 @@ class PluginProps(
  *
  * @return The plugin properties.
  */
-fun Project.getPluginProps(withPlatform: Boolean = true) = PluginProps.from(this, withPlatform)
+fun Project.getPluginProps() = PluginProps.from(this)

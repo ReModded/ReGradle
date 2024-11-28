@@ -8,12 +8,28 @@ group = "dev.remodded"
 version = "1.0.0-SNAPSHOT"
 
 repositories {
-    maven("https://repo.remodded.dev/repository/maven-public/")
+    maven("https://repo.remodded.dev/repository/ReGradle/")
 }
 
 dependencies {
-    implementation("com.google.devtools.ksp:symbol-processing-api:2.0.0-1.0.22")
-    implementation("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.0.0-1.0.22")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
+
+    implementation("com.google.devtools.ksp:symbol-processing-api:${libs.versions.ksp.get()}")
+    implementation("com.google.devtools.ksp:symbol-processing-gradle-plugin:${libs.versions.ksp.get()}")
+
+    implementation(libs.kotlin.jvm)
+    implementation(libs.shadow)
+    implementation(libs.foojay.resolver)
+
+    // PaperMC/Velocity
+    implementation("io.papermc.paperweight:paperweight-userdev:1.7.5")
+    implementation("xyz.jpenilla:run-task:2.3.1")
+    implementation("xyz.jpenilla:resource-factory:1.2.0")
+
+    // Sponge
+    compileOnly("org.spongepowered:plugin-meta:0.8.2")
+    implementation("org.spongepowered:vanillagradle:0.2.1-SNAPSHOT")
+    implementation("org.spongepowered:spongegradle-plugin-development:2.2.1-SNAPSHOT")
 }
 
 kotlin {

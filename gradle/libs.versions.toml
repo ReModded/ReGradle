@@ -1,12 +1,16 @@
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 gradle-plugin-publish = { id = "com.gradle.plugin-publish", version = "1.2.1" }
-shadow = { id = "io.github.goooler.shadow", version.ref = "shadow" }
 
 [versions]
 kotlin = "2.0.21"
-shadow = "8.1.7"
+shadow = "8.3.5"
+ksp = "2.0.21-1.0.26"
+foojay-resolver = "0.8.0"
 
 [libraries]
+kotlin-jvm = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+foojay-resolver = { module = "org.gradle.toolchains:foojay-resolver", version.ref = "foojay-resolver" }
+shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 
 [bundles]

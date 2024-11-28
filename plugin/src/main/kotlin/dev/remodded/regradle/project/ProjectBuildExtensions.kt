@@ -19,5 +19,5 @@ fun Project.markAsBuildTarget() {
  * @return True if the project is a build target, false otherwise.
  */
 fun Project.isBuildTarget(): Boolean {
-    return this.extra.getOptional(BUILD_TARGET_NAME_ID) ?: false
+    return this.extra.getOptional<Boolean>(BUILD_TARGET_NAME_ID) == true
 }

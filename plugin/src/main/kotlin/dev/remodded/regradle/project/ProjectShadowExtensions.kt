@@ -19,5 +19,5 @@ fun Project.markAsNeedShadow() {
  * @return True if the project needs shadowing, false otherwise.
  */
 fun Project.needsShadow(): Boolean {
-    return this.extra.getOptional(NEEDS_SHADOW) ?: false
+    return this.extra.getOptional<Boolean>(NEEDS_SHADOW) == true
 }
