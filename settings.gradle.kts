@@ -34,5 +34,5 @@ regradle {
 
     velocity("retest:proxy:velocity", Version(3, 3, 0, "SNAPSHOT"))
 
-    addReCorePlugin("dev.remodded", "ReCore", "1.0.0-SNAPSHOT")
+    addPlatformDependency("dev.remodded", "ReCore", "1.0.0-SNAPSHOT")
 }
