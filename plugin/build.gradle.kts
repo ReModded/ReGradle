@@ -60,8 +60,8 @@ gradlePlugin {
 
 publishing {
     repositories {
-        val username: String? by project
-        val password: String? by project
+        val usernameReModded: String? by project
+        val passwordReModded: String? by project
         val repoURL = "https://repo.remodded.dev/repository/" +
                 if (version.toString().endsWith("SNAPSHOT"))
                     "maven-snapshots/"
@@ -72,8 +72,8 @@ publishing {
             name = "ReModded"
             url = uri(repoURL)
             credentials {
-                this.username = username
-                this.password = password
+                username = usernameReModded
+                password = passwordReModded
             }
         }
     }

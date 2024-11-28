@@ -116,11 +116,26 @@ abstract class ModulePlugin(
         }
 
         publishing {
+            repositories {
+                val usernameReModded: String? by project
+                val passwordReModded: String? by project
+                val repoURL = "https://repo.remodded.dev/repository/" +
+                        if (version.toString().endsWith("SNAPSHOT"))
+                            "maven-snapshots/"
+                        else
+                            "maven-releases/"
+
+                maven {
+                    name = "ReModded"
+                    url = uri(repoURL)
+                    credentials {
+                        username = usernameReModded
+                        password = passwordReModded
+                    }
+                }
+            }
             publications {
                 create<MavenPublication>(name) {
-                    val usernameReModded: String? by project
-                    val passwordReModded: String? by project
-
                     afterEvaluate {
                         from(components["java"])
                         groupId = props.group + "." + props.id
@@ -128,20 +143,6 @@ abstract class ModulePlugin(
 //                        todo: dokka
 //                        artifact(javadocJar.get())
                         artifact(sourceJar.get())
-                    }
-                    repositories {
-                        maven {
-                            name = "ReModded"
-                            url = if (project.version.toString().contains("-SNAPSHOT"))
-                                uri("https://repo.remodded.dev/repository/maven-snapshots/")
-                            else
-                                uri("https://repo.remodded.dev/repository/maven-releases/")
-
-                            credentials {
-                                username = usernameReModded
-                                password = passwordReModded
-                            }
-                        }
                     }
                 }
             }
