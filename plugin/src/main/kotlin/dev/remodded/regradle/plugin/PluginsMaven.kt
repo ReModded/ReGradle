@@ -25,3 +25,17 @@ fun Project.getPluginFromMaven(pluginArtifact: String): File {
 
     return artifact.file
 }
+
+/**
+ * Get a plugin from the maven repository.
+ *
+ * @param pluginArtifact The plugin artifact to get.
+ * @return The plugin file.
+ */
+fun Project.tryGetPluginFromMaven(pluginArtifact: String): File? {
+    return try {
+        getPluginFromMaven(pluginArtifact)
+    } catch (e: Exception) {
+        null
+    }
+}

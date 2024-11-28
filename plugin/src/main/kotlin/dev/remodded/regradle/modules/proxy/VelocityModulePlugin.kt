@@ -3,10 +3,13 @@ package dev.remodded.regradle.modules.proxy
 import dev.remodded.regradle.modules.ModulePlugin
 import dev.remodded.regradle.modules.ModuleType
 import dev.remodded.regradle.plugin.getPluginProps
+import dev.remodded.regradle.plugin.tryGetPluginFromMaven
 import dev.remodded.regradle.project.markAsBuildTarget
 import dev.remodded.regradle.project.markAsNeedShadow
 import dev.remodded.regradle.regradleConfiguration
 import dev.remodded.regradle.utils.compileOnly
+import dev.remodded.regradle.utils.implementation
+import io.papermc.paperweight.util.configureTask
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import xyz.jpenilla.resourcefactory.velocity.VelocityConvention
@@ -33,14 +36,20 @@ class VelocityModulePlugin : ModulePlugin(ModuleType.VELOCITY) {
 
         dependencies {
             compileOnly("com.velocitypowered:velocity-api:$velocityVersion")
+
+            for (dep in regradleConfiguration.dependencies)
+                implementation(dep.toDependencyArtifact(project))
         }
 
         tasks {
-            named<RunVelocity>("runVelocity") {
+            configureTask<RunVelocity>("runVelocity") {
                 velocityVersion(velocityVersion.toString())
 
-                // TODO: add dependencies
-                //  pluginJars(getPluginFromMaven("dev.remodded.recore:ReCore-Velocity:1.0.0-SNAPSHOT"))
+                for (dep in regradleConfiguration.dependencies) {
+                    val pluginFile = tryGetPluginFromMaven(dep.toDependencyArtifact(project))
+                    if (pluginFile != null)
+                        pluginJars(pluginFile)
+                }
             }
         }
 
@@ -57,8 +66,9 @@ class VelocityModulePlugin : ModulePlugin(ModuleType.VELOCITY) {
 
             main.set(props.entryPoint)
 
-            // TODO: add dependencies
-            // dependency("recore", false)
+            for (dep in regradleConfiguration.dependencies) {
+                dependency(dep.name.lowercase(), dep.optional)
+            }
         }
     }
 }

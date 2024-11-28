@@ -31,6 +31,9 @@ interface ReGradleModulesConfiguration {
 
     fun module(module: String, moduleType: ModuleType, version: MCVersion = mcVersion)
 
-    fun addDependency(artifact: String)
-    fun addDependency(group: String, name: String, version: String)
+    fun addDependency(artifact: String, optional: Boolean = false)
+    fun addDependency(group: String, name: String, version: String, optional: Boolean = false)
+
+    fun addPlatformDependency(artifact: String, optional: Boolean = false)
+    fun addPlatformDependency(group: String, name: String, version: String, optional: Boolean = false)
 }

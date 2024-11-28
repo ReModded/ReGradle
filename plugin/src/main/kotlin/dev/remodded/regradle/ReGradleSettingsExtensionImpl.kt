@@ -1,6 +1,7 @@
 package dev.remodded.regradle
 
 import dev.remodded.regradle.modules.ModuleType
+import dev.remodded.regradle.project.getProjectSuffix
 import dev.remodded.regradle.utils.Version
 import org.gradle.api.GradleException
 import org.gradle.api.Project
@@ -18,7 +19,31 @@ abstract class ReGradleSettingsExtensionImpl(private val settings: Settings): Re
     protected val modules: MutableList<Module> = arrayListOf()
 
     @Serializable
-    data class Dependency(val group: String, val name: String, val version: String)
+    data class Dependency(
+        val group: String,
+        val name: String,
+        val version: String,
+        val optional: Boolean,
+        val platformPlugin: Boolean = false
+    ) {
+        companion object {
+            fun from(artifact: String, optional: Boolean = false, platformPlugin: Boolean = false): Dependency {
+                val parts = artifact.split(":")
+                if (parts.size < 3)
+                    throw GradleException("Missing artifact name or version.")
+                return Dependency(parts[0], parts[1], parts.drop(2).joinToString(), optional, platformPlugin)
+            }
+        }
+
+        override fun toString(): String = "$group:$name:$version"
+
+        fun toDependencyArtifact(project: Project): String {
+            if (platformPlugin)
+                return "${group}.${name.lowercase()}:${name}-${project.getProjectSuffix()}:${version}"
+            return toString()
+        }
+    }
+
     val dependencies = hashSetOf<Dependency>()
 
     var velocityVersion: Version = Version.UNKNOWN
@@ -77,16 +102,23 @@ abstract class ReGradleSettingsExtensionImpl(private val settings: Settings): Re
         modules.add(Module(module, moduleType, version))
     }
 
-    override fun addDependency(artifact: String) {
+    override fun addDependency(artifact: String, optional: Boolean) {
         val parts = artifact.split(":")
         if (parts.size < 3)
             throw GradleException("Missing artifact name or version.")
 
-        addDependency(parts[0], parts[1], parts.drop(2).joinToString())
+        addDependency(Dependency.from(artifact, optional))
     }
 
-    override fun addDependency(group: String, name: String, version: String) =
-        addDependency(Dependency(group, name, version))
+    override fun addDependency(group: String, name: String, version: String, optional: Boolean) =
+        addDependency(Dependency(group, name, version, optional))
+
+    override fun addPlatformDependency(artifact: String, optional: Boolean) {
+        addDependency(Dependency.from(artifact, optional, true))
+    }
+
+    override fun addPlatformDependency(group: String, name: String, version: String, optional: Boolean) =
+        addDependency(Dependency(group, name, version, optional, true))
 
     fun addDependency(dep: Dependency) {
         dependencies.add(dep)

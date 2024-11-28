@@ -3,13 +3,17 @@ package dev.remodded.regradle.modules.server
 import dev.remodded.regradle.modules.ModulePlugin
 import dev.remodded.regradle.modules.ModuleType
 import dev.remodded.regradle.plugin.getPluginProps
+import dev.remodded.regradle.plugin.tryGetPluginFromMaven
 import dev.remodded.regradle.project.markAsBuildTarget
 import dev.remodded.regradle.project.markAsNeedShadow
 import dev.remodded.regradle.regradle
+import dev.remodded.regradle.regradleConfiguration
+import dev.remodded.regradle.utils.implementation
 import io.papermc.paperweight.userdev.PaperweightUser
 import io.papermc.paperweight.userdev.PaperweightUserDependenciesExtension
 import io.papermc.paperweight.userdev.PaperweightUserExtension
 import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
+import io.papermc.paperweight.util.configureTask
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import xyz.jpenilla.resourcefactory.paper.PaperConvention
@@ -43,13 +47,19 @@ class PaperModulePlugin : ModulePlugin(ModuleType.PAPER) {
             configure<PaperweightUserDependenciesExtension> {
                 paperDevBundle("${mcVersion}-R0.1-SNAPSHOT")
             }
-            // todo: add dependencies
-            //  implementation("dev.remodded.recore:ReCore-Paper:1.0.0-SNAPSHOT")
+            for (dep in regradleConfiguration.dependencies)
+                implementation(dep.toDependencyArtifact(project))
         }
 
         tasks {
-            named<RunServer>("runServer") {
+            configureTask<RunServer>("runServer") {
                 minecraftVersion(mcVersion.toString())
+
+                for (dep in regradleConfiguration.dependencies) {
+                    val pluginFile = tryGetPluginFromMaven(dep.toDependencyArtifact(project))
+                    if (pluginFile != null)
+                        pluginJars(pluginFile)
+                }
             }
         }
 
@@ -67,8 +77,9 @@ class PaperModulePlugin : ModulePlugin(ModuleType.PAPER) {
             website.set(props.url)
 
             dependencies {
-                // todo: add dependencies
-                // server("ReCore", PaperPluginYaml.Load.BEFORE, required = true, joinClasspath = true)
+                for (dep in regradleConfiguration.dependencies) {
+                    server(dep.name, PaperPluginYaml.Load.BEFORE, required = !dep.optional, joinClasspath = true)
+                }
             }
         }
     }

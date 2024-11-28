@@ -3,17 +3,17 @@ package dev.remodded.regradle.modules.server
 import dev.remodded.regradle.modules.ModulePlugin
 import dev.remodded.regradle.modules.ModuleType
 import dev.remodded.regradle.plugin.getPluginProps
+import dev.remodded.regradle.plugin.tryGetPluginFromMaven
 import dev.remodded.regradle.project.markAsBuildTarget
 import dev.remodded.regradle.project.markAsNeedShadow
 import dev.remodded.regradle.regradle
+import dev.remodded.regradle.regradleConfiguration
 import dev.remodded.regradle.utils.compileOnly
 import dev.remodded.regradle.utils.implementation
+import io.papermc.paperweight.util.configureTask
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.maven
-import org.gradle.kotlin.dsl.repositories
+import org.gradle.api.tasks.JavaExec
+import org.gradle.kotlin.dsl.*
 import org.spongepowered.gradle.plugin.SpongePluginExtension
 import org.spongepowered.gradle.plugin.SpongePluginGradle
 import org.spongepowered.gradle.plugin.config.PluginLoaders
@@ -42,6 +42,9 @@ class SpongeModulePlugin : ModulePlugin(ModuleType.SPONGE) {
             implementation("org.spongepowered:sponge:${mcVersion}-${mcVersion.spongeAPIVersion}")
 
             compileOnly("org.spongepowered:mixin:0.8.7-SNAPSHOT")
+
+            for (dep in regradleConfiguration.dependencies)
+                implementation(dep.toDependencyArtifact(project))
         }
 
         val props = getPluginProps()
@@ -50,6 +53,18 @@ class SpongeModulePlugin : ModulePlugin(ModuleType.SPONGE) {
             version(mcVersion.toString())
             platform(MinecraftPlatform.SERVER)
             injectRepositories(false)
+
+            this.platform()
+        }
+
+        tasks {
+            configureTask<JavaExec>("runServer") {
+                for (dep in regradleConfiguration.dependencies) {
+                    val pluginFile = tryGetPluginFromMaven(dep.toDependencyArtifact(project))
+                    if (pluginFile != null)
+                        classpath += files(pluginFile)
+                }
+            }
         }
 
         configure<SpongePluginExtension> {
@@ -73,12 +88,14 @@ class SpongeModulePlugin : ModulePlugin(ModuleType.SPONGE) {
                     loadOrder(PluginDependency.LoadOrder.AFTER)
                     optional(false)
                 }
-                // todo: dependencies
-                //  dependency("recore") {
-                //      version("1.0.+")
-                //      loadOrder(PluginDependency.LoadOrder.AFTER)
-                //      optional(false)
-                //  }
+
+                for (dep in regradleConfiguration.dependencies) {
+                    dependency(dep.name.lowercase()) {
+                        version(dep.version)
+                        loadOrder(PluginDependency.LoadOrder.AFTER)
+                        optional(dep.optional)
+                    }
+                }
             }
         }
     }
