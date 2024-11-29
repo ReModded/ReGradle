@@ -5,6 +5,7 @@ import com.google.devtools.ksp.gradle.KspGradleSubplugin
 import dev.remodded.regradle.plugin.getPluginProps
 import dev.remodded.regradle.regradleConfiguration
 import dev.remodded.regradle.utils.ManifestReader
+import dev.remodded.regradle.utils.implementation
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
@@ -38,6 +39,10 @@ class CommonModulePlugin : ModulePlugin(ModuleType.COMMON) {
         dependencies {
             add("ksp", "dev.remodded:regradle:$reGradleVersion")
             regradleConfiguration.getModuleProject(ModuleType.API)?.let { add("api", it) }
+
+            for (dep in regradleConfiguration.dependencies)
+                if (dep.optional || !dep.platformPlugin)
+                    implementation(dep.toDependencyArtifact(project))
         }
 
         extensions.findByType<KspExtension>()?.apply {
