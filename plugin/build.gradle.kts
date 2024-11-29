@@ -42,6 +42,10 @@ tasks {
             attributes["ReGradle-Version"] = project.version
         }
     }
+
+    publish {
+        dependsOn(publishToMavenLocal)
+    }
 }
 
 gradlePlugin {
