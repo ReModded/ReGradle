@@ -102,6 +102,10 @@ abstract class ModulePlugin(
                 if (isBuildTarget())
                     destinationDirectory.set(rootProject.layout.buildDirectory.get().dir("libs"))
             }
+
+            publish {
+                dependsOn(publishToMavenLocal)
+            }
         }
 
 

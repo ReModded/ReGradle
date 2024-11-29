@@ -41,6 +41,8 @@ val TaskContainer.shadowJar get() = named<ShadowJar>("shadowJar")
 val TaskContainer.build get() = named<DefaultTask>("build")
 val TaskContainer.clean get() = named<Delete>("clean")
 val TaskContainer.test get() = named<Test>("test")
+val TaskContainer.publish get() = named<DefaultTask>("publish")
+val TaskContainer.publishToMavenLocal get() = named<DefaultTask>("publishToMavenLocal")
 
 
 // SourceSetContainer
