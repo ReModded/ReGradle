@@ -12,8 +12,12 @@ class RootModulePlugin : ModulePlugin(ModuleType.ROOT) {
             mavenCentral()
         }
 
-        val build = tasks.register("build")
-        val clean = tasks.register("clean")
+        val build = tasks.register("build") {
+            group = "build"
+        }
+        val clean = tasks.register("clean") {
+            group = "build"
+        }
 
         regradleConfiguration.allProjects.forEach { subproject ->
             if (subproject == project)
