@@ -117,6 +117,8 @@ abstract class ModulePlugin(
 
         dependencies {
             regradleConfiguration.getModuleProjectWithFallback(moduleType.dependency)?.let { add("api", it) }
+
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
         }
 
         publishing {
