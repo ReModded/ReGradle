@@ -3,6 +3,7 @@ package dev.remodded.regradle.ksp
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
 import java.io.OutputStream
+import java.util.Base64
 
 class Preprocessor(
     private val codeGenerator: CodeGenerator,
@@ -21,7 +22,7 @@ class Preprocessor(
 
         processed = true
 
-        val packageName = options["root_package"]!!
+        val packageName = decodeFromBase64(options["root_package"]!!)
 
         logger.info("Generating Constants for $packageName")
 
@@ -34,12 +35,17 @@ class Preprocessor(
             file += "object Constants {\n"
 
             options.forEach {
-                file += "    const val ${it.key.uppercase()} = \"${it.value}\"\n"
+                file += "    const val ${it.key.uppercase()} = \"${decodeFromBase64(it.value)}\"\n"
             }
 
             file += "}\n"
         }
 
         return emptyList()
+    }
+
+    private fun decodeFromBase64(value: String): String {
+        val decoder = Base64.getDecoder()
+        return decoder.decode(value).toString(Charsets.UTF_8)
     }
 }

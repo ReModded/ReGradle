@@ -8,13 +8,11 @@ import dev.remodded.regradle.utils.ManifestReader
 import dev.remodded.regradle.utils.implementation
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.findByType
-import org.gradle.kotlin.dsl.maven
-import org.gradle.kotlin.dsl.repositories
+import org.gradle.kotlin.dsl.*
+import java.util.*
 
 class CommonModulePlugin : ModulePlugin(ModuleType.COMMON) {
+
     override fun apply(project: Project): Unit = with(project) {
         super.apply(this)
 
@@ -48,8 +46,16 @@ class CommonModulePlugin : ModulePlugin(ModuleType.COMMON) {
         extensions.findByType<KspExtension>()?.apply {
             val props = getPluginProps()
             props.forEach {
-                arg(it.key, it.value)
+                arg(it.key, encodeToBase64(it.value))
+            }
+            arguments.forEach { arg ->
+                println("KSP [${arg.key}=${arg.value}]")
             }
         }
+    }
+
+    private fun encodeToBase64(value: String): String {
+        val encoder = Base64.getEncoder()
+        return encoder.encodeToString(value.toByteArray())
     }
 }
