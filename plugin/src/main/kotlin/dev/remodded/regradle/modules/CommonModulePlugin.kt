@@ -4,12 +4,12 @@ import com.google.devtools.ksp.gradle.KspExtension
 import com.google.devtools.ksp.gradle.KspGradleSubplugin
 import dev.remodded.regradle.plugin.getPluginProps
 import dev.remodded.regradle.regradleConfiguration
+import dev.remodded.regradle.utils.Base64Utils
 import dev.remodded.regradle.utils.ManifestReader
 import dev.remodded.regradle.utils.implementation
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
-import java.util.*
 
 class CommonModulePlugin : ModulePlugin(ModuleType.COMMON) {
 
@@ -43,19 +43,12 @@ class CommonModulePlugin : ModulePlugin(ModuleType.COMMON) {
                     implementation(dep.toDependencyArtifact(project))
         }
 
-        extensions.findByType<KspExtension>()?.apply {
-            val props = getPluginProps()
+        val props = getPluginProps()
+
+        extensions.configure<KspExtension> {
             props.forEach {
-                arg(it.key, encodeToBase64(it.value))
-            }
-            arguments.forEach { arg ->
-                println("KSP [${arg.key}=${arg.value}]")
+                arg(it.key, Base64Utils.encode(it.value))
             }
         }
-    }
-
-    private fun encodeToBase64(value: String): String {
-        val encoder = Base64.getEncoder()
-        return encoder.encodeToString(value.toByteArray())
     }
 }
